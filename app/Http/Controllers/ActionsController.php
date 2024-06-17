@@ -7,18 +7,38 @@ use GuzzleHttp\Client;
 
 class ActionsController extends Controller
 {
+
     public static function index()
     {
-        $client = new Client();
-            $response = $client->request('GET', 'https://api.themoviedb.org/3/movie/1022789-inside-out-2?language=ru-RU', [
-                'headers' => [
-                'Authorization' => 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiI2NzE4YmIwOWZhY2VhZDIwYjE0YTRlY2IwYjRmNDk4OCIsInN1YiI6IjY2NzAwZjQwYzI5ODgwODk5MGNiOWY3MiIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.rW34m9G-t_icul6idsqxLebF-9mswhw9Nl9pHC0g1Bo',
-                'accept' => 'application/json',
-            ],
-        ]);
+        $import = new ApiController();
+        $response = $import->client->request('GET', 'trending/movie/day?language=ru-Rus');
 
         $data = json_decode($response->getBody()->getContents(),true);
 
         return $data;
     }
+
+    public static function film_info(int $film_id)
+    {
+        $import = new ApiController();
+        $response = $import->client->request('GET', "movie/{$film_id}?language=ru-Rus");
+
+        $data = json_decode($response->getBody()->getContents(),true);
+
+        return $data;
+    }
+
+    public static function film_recomend(int $film_id)
+    {
+        $import = new ApiController();
+        try{
+            $response = $import->client->request('GET', "movie/{$film_id}/recommendations?language=ru-RU&page=1");
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data;
+        } catch (\Exception $e) {
+            return null;
+        }
+    }
+
+
 }
